@@ -194,16 +194,27 @@
         /**
          * 初始化VideoJS
          */
+        /**
+         * 初始化VideoJS
+         */
         protected initVideoJs() {
             const videoJsPlayer = VideoJs('video-js-' + this.liveId, {
                 autoplay: false, // 自动播放
                 controls: true, // 是否显示控制栏
                 techOrder: ['html5'], // 兼容顺序
-                sourceOrder: true, //
+                sourceOrder: true,
                 sources: [{
-                    src: this.playStreamPath
+                    src: this.playStreamPath,
+                    type: 'application/x-mpegURL' // HLS 流必须指定 MIME type
                 }],
-              playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, 3.5, 4, 4.5, 5]
+                playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, 3.5, 4, 4.5, 5],
+                html5: {
+                    vhs: {
+                        overrideNative: true // 强制使用 VHS 而非原生 HLS（Electron/Chromium 原生不支持 HLS）
+                    },
+                    nativeAudioTracks: false,
+                    nativeVideoTracks: false
+                }
             });
             this.player = new VideoJsPlayer(videoJsPlayer);
 
@@ -305,11 +316,11 @@
 </script>
 
 <style scoped lang="scss">
-/deep/.el-carousel__container {
+::v-deep .el-carousel__container {
   height: 100%;
 }
 
-/deep/.el-carousel__item {
+::v-deep .el-carousel__item {
   display: flex;
   flex-direction: column;
   align-items: center;
